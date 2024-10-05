@@ -31,6 +31,7 @@ grow_horizontal = 2
 grow_vertical = 0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 1
 color = Color(0.509804, 0.780392, 0.74902, 1)
 
 [node name="Label" type="Label" parent="CardBackground/RuleArea"]
@@ -56,6 +57,7 @@ anchor_right = 1.0
 offset_left = -40.0
 offset_bottom = 40.0
 grow_horizontal = 0
+mouse_filter = 1
 color = Color(0.509804, 0.780392, 0.74902, 1)
 
 [node name="Label" type="Label" parent="CardBackground/ScoreArea"]

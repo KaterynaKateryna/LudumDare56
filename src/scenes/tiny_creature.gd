@@ -3,6 +3,9 @@ extends Node2D
 @export var colour: Color
 @export var size: Vector2
 
+var row
+var column
+
 @onready var shape = get_node("Shape")
 @onready var check = get_node("Shape/check")
 
