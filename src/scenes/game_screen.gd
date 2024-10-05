@@ -46,18 +46,21 @@ func init():
 	selected_creatures.clear()
 	
 	for i in range(0, 49):
-		var creature = _get_random_creature_maybe()
 		var cell = cells[i]
+		if cell.get_child_count() > 0:
+			var old_creature = cell.get_child(0)
+			cell.remove_child(old_creature)
+			old_creature.queue_free()
+			
+		var creature = _get_random_creature_maybe()
+		
 		if creature != null:
 			creature.size = cell.custom_minimum_size * 0.8
 			creature.position = Vector2(cell_edge_center, cell_edge_center)
 			creature.row = cell.row
 			creature.column = cell.column
 			cell.add_child(creature)
-		elif cell.get_child_count() > 0:
-			var old_creature = cell.get_child(0)
-			cell.remove_child(old_creature)
-			old_creature.queue_free()
+			print("%s %s %s" % [cell.row, cell.column, creature.colour])
 		
 	for n in cards_container.get_children():
 		cards_container.remove_child(n)
@@ -148,6 +151,7 @@ func _on_cell_button_up(cell: Button):
 	if selected_card != null:
 		if cell.get_child_count() > 0:
 			var creature = cell.get_child(0)
+			print("%s %s %s" % [creature.row, creature.column, creature.colour])
 			if creature.check.visible == false:
 				creature.check.visible = true
 				selected_creatures.push_back(creature)
