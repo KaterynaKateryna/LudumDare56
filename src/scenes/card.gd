@@ -9,8 +9,6 @@ extends Node2D
 @export var rule: Enums.CARD_RULE_TYPE
 @export var size: Vector2
 
-var index_in_hand = -1
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	if rule == Enums.CARD_RULE_TYPE.FOUR_IN_A_ROW:

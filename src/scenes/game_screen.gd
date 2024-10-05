@@ -10,6 +10,7 @@ extends Control
 @onready var card_scene = load("res://scenes/card.tscn")
 @onready var cell_scene = load("res://scenes/cell.tscn")
 @onready var move = load("res://scripts/move.gd")
+@onready var game_end_scene = load("res://scenes/game_end.tscn")
 
 var rng = RandomNumberGenerator.new()
 var cell_edge_size = 100
@@ -18,11 +19,10 @@ var next_move
 var selected_card
 var selected_creatures = []
 var cells = []
-var score = 0
+var score
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	score_value_label.text = str(score)
 	for i in range(0, 49):
 		var cell = cell_scene.instantiate()
 		cell.row = i / 7
@@ -33,18 +33,38 @@ func _ready() -> void:
 		cell.custom_minimum_size = Vector2(cell_edge_size, cell_edge_size)	
 		cell.connect("button_up", _on_cell_button_up.bind(cell))
 		grid.add_child(cell)
-		cells.push_back(cell)
+		cells.push_back(cell)		
+	init()	
+
+func init():
+	submit_button.disabled = true
+	
+	score = 0
+	score_value_label.text = str(score)
+	
+	selected_card = null
+	selected_creatures.clear()
+	
+	for i in range(0, 49):
 		var creature = _get_random_creature_maybe()
+		var cell = cells[i]
 		if creature != null:
 			creature.size = cell.custom_minimum_size * 0.8
 			creature.position = Vector2(cell_edge_center, cell_edge_center)
 			creature.row = cell.row
 			creature.column = cell.column
 			cell.add_child(creature)
+		elif cell.get_child_count() > 0:
+			var old_creature = cell.get_child(0)
+			cell.remove_child(old_creature)
+			old_creature.queue_free()
+		
+	for n in cards_container.get_children():
+		cards_container.remove_child(n)
+		n.queue_free()
 			
 	next_move = _get_random_next_move()
 	_display_next_move()
-
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
@@ -158,6 +178,14 @@ func _on_cell_button_up(cell: Button):
 	tiny_creature.size = cell.custom_minimum_size * 0.8
 	tiny_creature.position = Vector2(cell_edge_center, cell_edge_center)
 	cell.add_child(tiny_creature)
+	
+	if _is_board_full():
+		print("end")
+		var game_end = game_end_scene.instantiate()
+		game_end.score = score
+		self.add_child(game_end)
+		return
+	
 	next_move = _get_random_next_move()
 	_display_next_move()
 	
@@ -174,7 +202,6 @@ func _on_card_gui_input(event: InputEvent, card):
 		control.add_child(card_in_hand)
 		
 		cards_container.add_child(control)
-		card_in_hand.index_in_hand = cards_container.get_child_count() - 1
 		
 		card_in_hand.card_bgr.connect("gui_input", _on_card_in_hand_gui_input.bind(card_in_hand))
 		
@@ -219,6 +246,8 @@ func _is_size_satisfied(size: int):
 	return selected_creatures.size() == size
 	
 func _is_colour_satisfied():
+	for n in selected_creatures:
+		print(n.colour)
 	return selected_creatures.all(func(x): return x.colour == selected_creatures[0].colour)
 	
 func _is_line():
@@ -255,7 +284,10 @@ func _on_submit_button_button_up() -> void:
 	score_value_label.text = str(score)
 
 	selected_card.check.visible = false
-	var to_remove = cards_container.get_child(selected_card.index_in_hand)
+	var to_remove = cards_container.get_children().filter(func(x): return x.get_children()[0] == selected_card)[0]
 	cards_container.remove_child(to_remove)
 	to_remove.queue_free()
 	selected_card = null
+	
+func _is_board_full():
+	return cells.all(func(x): return x.get_child_count() > 0)
