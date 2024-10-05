@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://cd41gkvk50yg4"]
+[gd_scene load_steps=4 format=3 uid="uid://cd41gkvk50yg4"]
 
 [ext_resource type="PackedScene" uid="uid://cwnehyrj7fgf7" path="res://scenes/background.tscn" id="1_2d4v5"]
 [ext_resource type="Script" path="res://scenes/game_screen.gd" id="1_yoqs2"]
+[ext_resource type="Theme" uid="uid://dglghe3y18b7k" path="res://themes/main_theme.tres" id="3_bjgpt"]
 
 [node name="GameScreen" type="Control"]
 layout_mode = 3
@@ -15,17 +16,46 @@ script = ExtResource("1_yoqs2")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="GridContainer" type="GridContainer" parent="CanvasLayer"]
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
+anchors_preset = -1
+anchor_left = 0.2
+anchor_top = 0.2
+anchor_right = 0.6
+anchor_bottom = 0.8
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 columns = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer"]
+anchors_preset = -1
+anchor_left = 0.7
+anchor_top = 0.2
+anchor_right = 0.95
+anchor_bottom = 0.8
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="NextMoveLabel" type="Label" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("3_bjgpt")
+text = "Next move:"
+horizontal_alignment = 1
+
+[node name="NextMovePlaceholder" type="ColorRect" parent="CanvasLayer/VBoxContainer"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+color = Color(1, 1, 1, 0.192157)
+
+[node name="ScoreLabel" type="Label" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+text = "Score:"
+horizontal_alignment = 1
+
+[node name="ScoreValueLabel" type="Label" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.139449, 0.754646, 1)
+text = "0"
+horizontal_alignment = 1
