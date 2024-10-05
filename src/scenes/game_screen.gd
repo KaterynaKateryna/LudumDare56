@@ -4,6 +4,7 @@ extends Control
 @onready var cards_container = get_node("CanvasLayer/BottomContainer/CardsContainer")
 @onready var next_move_placeholder = get_node("CanvasLayer/VBoxContainer/NextMovePlaceholder")
 @onready var submit_button = get_node("CanvasLayer/BottomContainer/SubmitButton")
+@onready var score_value_label = get_node("CanvasLayer/VBoxContainer/ScoreValueLabel")
 
 @onready var tiny_creature_scene = load("res://scenes/tiny_creature.tscn")
 @onready var card_scene = load("res://scenes/card.tscn")
@@ -16,9 +17,12 @@ var cell_edge_center = cell_edge_size / 2
 var next_move
 var selected_card
 var selected_creatures = []
+var cells = []
+var score = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	score_value_label.text = str(score)
 	for i in range(0, 49):
 		var cell = cell_scene.instantiate()
 		cell.row = i / 7
@@ -29,6 +33,7 @@ func _ready() -> void:
 		cell.custom_minimum_size = Vector2(cell_edge_size, cell_edge_size)	
 		cell.connect("button_up", _on_cell_button_up.bind(cell))
 		grid.add_child(cell)
+		cells.push_back(cell)
 		var creature = _get_random_creature_maybe()
 		if creature != null:
 			creature.size = cell.custom_minimum_size * 0.8
@@ -169,6 +174,8 @@ func _on_card_gui_input(event: InputEvent, card):
 		control.add_child(card_in_hand)
 		
 		cards_container.add_child(control)
+		card_in_hand.index_in_hand = cards_container.get_child_count() - 1
+		
 		card_in_hand.card_bgr.connect("gui_input", _on_card_in_hand_gui_input.bind(card_in_hand))
 		
 		next_move = _get_random_next_move()
@@ -232,4 +239,23 @@ func _is_line():
 				return false
 		return true
 	# diagonal
-	
+
+func _on_submit_button_button_up() -> void:
+	submit_button.disabled = true
+	if !_is_rule_satisfied():
+		return
+		
+	for n in selected_creatures:
+		var selected_cell = cells.filter(func(x): return x.row == n.row && x.column == n.column)[0]
+		selected_cell.remove_child(n)
+		n.queue_free()
+	selected_creatures.clear()
+
+	score += selected_card.score
+	score_value_label.text = str(score)
+
+	selected_card.check.visible = false
+	var to_remove = cards_container.get_child(selected_card.index_in_hand)
+	cards_container.remove_child(to_remove)
+	to_remove.queue_free()
+	selected_card = null
