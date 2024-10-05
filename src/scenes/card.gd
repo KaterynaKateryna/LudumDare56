@@ -3,6 +3,7 @@ extends Node2D
 @onready var card_bgr = get_node("CardBackground")
 @onready var rule_label = get_node("CardBackground/RuleArea/Label")
 @onready var score_label = get_node("CardBackground/ScoreArea/Label")
+@onready var check = get_node("CardBackground/Check")
 
 @export var score: int
 @export var rule: Enums.CARD_RULE_TYPE
@@ -22,7 +23,8 @@ func _ready() -> void:
 	score_label.text = str(score)
 	
 	if size != null:
-		card_bgr.size = size
+		card_bgr.size.x = size.x 
+		card_bgr.size.y = size.y
 	
 
 func init(score: int, rule: Enums.CARD_RULE_TYPE):

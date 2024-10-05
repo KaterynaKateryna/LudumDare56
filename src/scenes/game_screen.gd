@@ -1,6 +1,7 @@
 extends Control
 
 @onready var grid = get_node("CanvasLayer/GridContainer")
+@onready var cards_container = get_node("CanvasLayer/CardsContainer")
 @onready var next_move_placeholder = get_node("CanvasLayer/VBoxContainer/NextMovePlaceholder")
 
 @onready var tiny_creature_scene = load("res://scenes/tiny_creature.tscn")
@@ -11,6 +12,7 @@ var rng = RandomNumberGenerator.new()
 var cell_edge_size = 100
 var cell_edge_center = cell_edge_size / 2
 var next_move
+var selected_card
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -76,6 +78,7 @@ func _get_random_card():
 		
 	var card = card_scene.instantiate()
 	card.init(score, rule)
+	
 	return card
 
 func _get_random_next_move():
@@ -107,8 +110,17 @@ func _display_next_move():
 		next_move.card.size = next_move_placeholder.size * 0.8
 		next_move.card.position = placeholder_center
 		next_move_placeholder.add_child(next_move.card)
+		next_move.card.card_bgr.connect("gui_input", _on_card_gui_input.bind(next_move.card))
 		
 func _on_cell_button_up(cell: Button):
+	if selected_card != null:
+		if cell.get_child_count() > 0:
+			var creature = cell.get_child(0)
+			creature.check.visible = true
+		else: 
+			print("nothing to select")
+		return
+	
 	if next_move.move_type != Enums.MOVE_TYPE.CREATURE:
 		print("ignore click")
 		return
@@ -124,4 +136,36 @@ func _on_cell_button_up(cell: Button):
 	cell.add_child(tiny_creature)
 	next_move = _get_random_next_move()
 	_display_next_move()
+	
+func _on_card_gui_input(event: InputEvent, card):
+	if event is InputEventMouseButton and !event.pressed: # pressed == false means the mouse button's state is released.
+		var card_in_hand = card_scene.instantiate()
+		card_in_hand.init(card.score, card.rule)
+		card_in_hand.size.y = cards_container.size.y
+		card_in_hand.size.x = cards_container.size.y * 0.75
+		card_in_hand.position.y = cards_container.size.y / 2
+		
+		var control = Control.new()
+		control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		control.add_child(card_in_hand)
+		
+		cards_container.add_child(control)
+		card_in_hand.card_bgr.connect("gui_input", _on_card_in_hand_gui_input.bind(card_in_hand))
+		
+		next_move = _get_random_next_move()
+		_display_next_move()
+		
+func _on_card_in_hand_gui_input(event: InputEvent, card):
+	if event is InputEventMouseButton and !event.pressed: # pressed == false means the mouse button's state is released.
+		if card.check.visible == true:
+			card.check.visible = false
+			selected_card = null
+			return
+		
+		for n in cards_container.get_children():
+			var other_card = n.get_child(0)
+			other_card.check.visible = false
+		
+		card.check.visible = true
+		selected_card = card
 	
