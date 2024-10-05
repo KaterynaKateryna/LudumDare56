@@ -1,0 +1,70 @@
+[gd_scene load_steps=2 format=3 uid="uid://dp6uxkf46204g"]
+
+[ext_resource type="Script" path="res://scenes/card.gd" id="1_uvral"]
+
+[node name="Card" type="Node2D"]
+script = ExtResource("1_uvral")
+
+[node name="CardBackground" type="ColorRect" parent="."]
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -75.0
+offset_right = 50.0
+offset_bottom = 75.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.398403, 0.667315, 0.635914, 1)
+
+[node name="RuleArea" type="ColorRect" parent="CardBackground"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.5
+anchor_right = 0.9
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(0.509804, 0.780392, 0.74902, 1)
+
+[node name="Label" type="Label" parent="CardBackground/RuleArea"]
+custom_minimum_size = Vector2(80, 60)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="ScoreArea" type="ColorRect" parent="CardBackground"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+color = Color(0.509804, 0.780392, 0.74902, 1)
+
+[node name="Label" type="Label" parent="CardBackground/ScoreArea"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 24
+horizontal_alignment = 1
+vertical_alignment = 1

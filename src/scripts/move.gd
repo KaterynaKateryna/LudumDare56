@@ -6,6 +6,11 @@ var creature:
 	set(value):
 		if move_type == Enums.MOVE_TYPE.CREATURE:
 			creature = value
+			
+var card:
+	set(value):
+		if move_type == Enums.MOVE_TYPE.CARD:
+			card = value
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

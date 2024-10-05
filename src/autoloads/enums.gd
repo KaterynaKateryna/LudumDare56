@@ -2,5 +2,12 @@ extends Node
 
 enum MOVE_TYPE {
 	CREATURE, 
-	SUBMIT
+	CARD
+}
+
+enum CARD_RULE_TYPE {
+	FOUR_IN_A_ROW,
+	FIVE_IN_A_ROW,
+	SQUARE,
+	TWO_BY_THREE
 }
