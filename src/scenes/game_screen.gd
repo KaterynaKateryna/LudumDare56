@@ -15,9 +15,12 @@ var next_move
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	for i in range(0, 49):
-		var cell = ColorRect.new()
-		cell.color = Color("a58dff")
-		cell.custom_minimum_size = Vector2(cell_edge_size, cell_edge_size)
+		var cell = Button.new()
+		var new_sb = StyleBoxFlat.new()
+		new_sb.bg_color = Color("a58dff")
+		cell.add_theme_stylebox_override("normal", new_sb)
+		cell.custom_minimum_size = Vector2(cell_edge_size, cell_edge_size)	
+		cell.connect("button_up", _on_cell_button_up.bind(cell))
 		grid.add_child(cell)
 		var creature = _get_random_creature_maybe()
 		if creature != null:
@@ -76,14 +79,14 @@ func _get_random_card():
 	return card
 
 func _get_random_next_move():
-	var rand = rng.randi_range(0, 1)
+	var rand = rng.randi_range(0, 4)
 	
-	if rand == 0:
+	if rand < 4:
 		print("creature")
 		var result = move.new(Enums.MOVE_TYPE.CREATURE)
 		result.creature = _get_random_creature()
 		return result
-	elif rand == 1:
+	else:
 		print("card")
 		var result = move.new(Enums.MOVE_TYPE.CARD)
 		result.card = _get_random_card()
@@ -91,9 +94,9 @@ func _get_random_next_move():
 		
 		
 func _display_next_move():
-	var children_count = next_move_placeholder.get_child_count()
-	if children_count != 0:
-		next_move_placeholder.get_children().clear()
+	for n in next_move_placeholder.get_children():
+		next_move_placeholder.remove_child(n)
+		n.queue_free()
 	
 	var placeholder_center = Vector2(next_move_placeholder.size.x / 2, next_move_placeholder.size.y / 2)
 	if next_move.move_type == Enums.MOVE_TYPE.CREATURE:
@@ -105,4 +108,20 @@ func _display_next_move():
 		next_move.card.position = placeholder_center
 		next_move_placeholder.add_child(next_move.card)
 		
-		
+func _on_cell_button_up(cell: Button):
+	if next_move.move_type != Enums.MOVE_TYPE.CREATURE:
+		print("ignore click")
+		return
+
+	if cell.get_child_count() > 0:
+		print("cell occupied")
+		return
+	
+	var tiny_creature = tiny_creature_scene.instantiate()
+	tiny_creature.colour = next_move.creature.colour	
+	tiny_creature.size = cell.custom_minimum_size * 0.8
+	tiny_creature.position = Vector2(cell_edge_center, cell_edge_center)
+	cell.add_child(tiny_creature)
+	next_move = _get_random_next_move()
+	_display_next_move()
+	
