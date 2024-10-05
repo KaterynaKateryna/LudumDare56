@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://b6jtrmw0fmbu0"]
+
+[ext_resource type="Texture2D" uid="uid://dj4ynif8imwcw" path="res://assets/creature_grey.png" id="1_p5t4w"]
+[ext_resource type="Script" path="res://scenes/tiny_creature.gd" id="1_wlxne"]
+
+[node name="TinyCreature" type="Node2D"]
+script = ExtResource("1_wlxne")
+
+[node name="Shape" type="Sprite2D" parent="."]
+texture = ExtResource("1_p5t4w")
