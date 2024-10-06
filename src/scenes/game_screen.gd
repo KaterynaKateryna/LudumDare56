@@ -5,6 +5,7 @@ extends Control
 @onready var next_move_placeholder = get_node("CanvasLayer/NextMoveContainer/NextMovePlaceholder")
 @onready var submit_button = get_node("CanvasLayer/BottomContainer/SubmitButton")
 @onready var score_value_label = get_node("CanvasLayer/VBoxContainer/HBoxContainer/ScoreValueLabel")
+@onready var multiplier_value_label = get_node("CanvasLayer/VBoxContainer/HBoxContainer/MultiplierValueLabel")
 
 @onready var tiny_creature_scene = load("res://scenes/tiny_creature.tscn")
 @onready var card_scene = load("res://scenes/card.tscn")
@@ -19,8 +20,9 @@ var next_move
 var selected_card
 var selected_creatures = []
 var cells = []
-var score
+var score: int
 var hand_limit = 4
+var multiplier: int
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -47,6 +49,9 @@ func init():
 	
 	score = 0
 	score_value_label.text = str(score)
+	
+	multiplier = 1
+	multiplier_value_label.text = str(multiplier)
 	
 	selected_card = null
 	selected_creatures.clear()
@@ -103,7 +108,7 @@ func _get_random_creature():
 	return tiny_creature
 	
 func _get_random_card():
-	var rand = rng.randi_range(0, 3)
+	var rand = rng.randi_range(0, 4)
 	var rule
 	var score
 	if rand == 0:
@@ -118,6 +123,10 @@ func _get_random_card():
 	elif rand == 3:
 		rule = Enums.CARD_RULE_TYPE.TWO_BY_THREE
 		score = 50
+	elif rand == 4:
+		rule = Enums.CARD_RULE_TYPE.BAD
+		score = 0
+			
 		
 	var card = card_scene.instantiate()
 	card.init(score, rule)
@@ -165,13 +174,20 @@ func _display_next_move():
 	elif next_move.move_type == Enums.MOVE_TYPE.CARD:
 		var current_hand_size = cards_container.get_child_count()
 		
+		var disable_bad_card = false
+		var is_bad_card = next_move.card.rule == Enums.CARD_RULE_TYPE.BAD
+		if is_bad_card:
+			var empty_cells = cells.filter(func(x): return x.get_child_count() == 0)
+			if empty_cells.size() < 3:
+				disable_bad_card = true
+		
 		next_move.card.size.y = next_move_placeholder.size.y * 0.8	
 		next_move.card.size.x = next_move_placeholder.size.y * 0.6
 		next_move.card.position.x = next_move_placeholder.size.x * 0.3	
 		next_move.card.position.y = next_move_placeholder.size.y * 0.1
 		
 		next_move_placeholder.add_child(next_move.card)
-		if current_hand_size >= hand_limit:
+		if (current_hand_size >= hand_limit && !is_bad_card) || disable_bad_card:
 			next_move.card.take_button.disabled = true
 		else:
 			next_move.card.take_button.connect("button_up", _on_card_take_button_up.bind(next_move.card))
@@ -182,6 +198,11 @@ func _on_cell_button_up(cell: Button):
 	if selected_card != null:
 		if cell.get_child_count() > 0:
 			var creature = cell.get_child(0)
+			
+			if creature.bad:
+				print("bad creature")
+				return
+
 			print("%s %s %s" % [creature.row, creature.column, creature.colour])
 			if creature.check.visible == false:
 				creature.check.visible = true
@@ -225,6 +246,31 @@ func _on_cell_button_up(cell: Button):
 	_display_next_move()
 	
 func _on_card_take_button_up(card):
+	if card.rule == Enums.CARD_RULE_TYPE.BAD:
+		
+		var empty_cells = cells.filter(func(x): return x.get_child_count() == 0)
+		var size = empty_cells.size()
+		
+		var rand = rng.randi_range(0, size - 1)
+		var cell = empty_cells[rand]
+		
+		var tiny_creature = tiny_creature_scene.instantiate()
+		tiny_creature.bad = true
+		tiny_creature.size = cell.size * 0.8
+		tiny_creature.position = cell.size / 2
+		tiny_creature.row = cell.row
+		tiny_creature.column = cell.column
+	
+		cell.add_child(tiny_creature)
+		
+		multiplier = multiplier * 2
+		multiplier_value_label.text = str(multiplier)
+		
+		next_move = _get_random_next_move()
+		_display_next_move()
+		return
+	
+	
 	var card_in_hand = card_scene.instantiate()
 	card_in_hand.init(card.score, card.rule)
 	card_in_hand.size.y = cards_container.size.y * 0.9
@@ -361,7 +407,7 @@ func _on_submit_button_button_up() -> void:
 		n.queue_free()
 	selected_creatures.clear()
 
-	score += selected_card.score
+	score += selected_card.score * multiplier
 	score_value_label.text = str(score)
 
 	selected_card.check.visible = false

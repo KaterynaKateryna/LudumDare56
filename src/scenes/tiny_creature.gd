@@ -11,11 +11,17 @@ var size:
 var row
 var column
 
+var bad = false
+
 @onready var shape = get_node("Shape")
 @onready var check = get_node("Shape/check")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	if bad:
+		var texture = load('res://assets/bad.png')
+		shape.texture = texture
+	
 	if colour != null:
 		shape.modulate = colour
 		check.modulate = Color(0, 255, 0)

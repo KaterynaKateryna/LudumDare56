@@ -23,6 +23,9 @@ func _ready() -> void:
 		rule_label.text = "Four creatures of same colour in a square"
 	elif rule == Enums.CARD_RULE_TYPE.TWO_BY_THREE:
 		rule_label.text = "Six creatures of same colour 2 by 3"
+	elif rule == Enums.CARD_RULE_TYPE.BAD:
+		rule_label.text = "lose one random cell -> gain x2 score multiplier"
+		take_button.text = "Play!"
 		
 	score_label.text = str(score)
 	
