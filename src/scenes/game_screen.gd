@@ -29,7 +29,7 @@ func _ready() -> void:
 		cell.row = i / 7
 		cell.column = i % 7
 		var new_sb = StyleBoxFlat.new()
-		new_sb.bg_color = Color("a58dff")
+		new_sb.bg_color = Color("ffffff28")
 		cell.add_theme_stylebox_override("normal", new_sb)
 		#cell.custom_minimum_size = Vector2(cell_edge_size, cell_edge_size)	
 		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -88,13 +88,15 @@ func _get_random_creature_maybe():
 	
 func _get_random_creature():
 	var colour
-	var rand_colour = rng.randi_range(0, 2)
+	var rand_colour = rng.randi_range(0, 3)
 	if rand_colour == 0:
-		colour = Color.MEDIUM_VIOLET_RED
+		colour = Color.ORANGE_RED
 	elif rand_colour == 1:
-		colour = Color.AQUAMARINE
-	elif rand_colour == 2:
 		colour = Color.DEEP_SKY_BLUE
+	elif rand_colour == 2:
+		colour = Color.LAWN_GREEN
+	elif rand_colour == 3:
+		colour = Color.YELLOW
 	
 	var tiny_creature = tiny_creature_scene.instantiate()
 	tiny_creature.colour = colour
@@ -162,8 +164,12 @@ func _display_next_move():
 		next_move_placeholder.add_child(next_move.creature)
 	elif next_move.move_type == Enums.MOVE_TYPE.CARD:
 		var current_hand_size = cards_container.get_child_count()
-		next_move.card.size = next_move_placeholder.size * 0.8
-		next_move.card.position = next_move_placeholder.size * 0.1
+		
+		next_move.card.size.y = next_move_placeholder.size.y * 0.8	
+		next_move.card.size.x = next_move_placeholder.size.y * 0.6
+		next_move.card.position.x = next_move_placeholder.size.x * 0.3	
+		next_move.card.position.y = next_move_placeholder.size.y * 0.1
+		
 		next_move_placeholder.add_child(next_move.card)
 		if current_hand_size >= hand_limit:
 			next_move.card.take_button.disabled = true
@@ -398,5 +404,9 @@ func _on_next_move_placeholder_item_rect_changed():
 	elif next_move.move_type == Enums.MOVE_TYPE.CARD:
 		var current_hand_size = cards_container.get_child_count()
 		# todo add proper setter
-		next_move.card.card_bgr.size = next_move_placeholder.size * 0.8
-		next_move.card.position = next_move_placeholder.size * 0.1
+		#next_move.card.card_bgr.size = next_move_placeholder.size * 0.8
+		
+		next_move.card.card_bgr.size.y = next_move_placeholder.size.y * 0.8	
+		next_move.card.card_bgr.size.x = next_move_placeholder.size.y * 0.6
+		next_move.card.position.x = next_move_placeholder.size.x * 0.3	
+		next_move.card.position.y = next_move_placeholder.size.y * 0.1

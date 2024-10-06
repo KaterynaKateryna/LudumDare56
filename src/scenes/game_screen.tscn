@@ -95,7 +95,7 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(400, 400)
 layout_mode = 2
 size_flags_vertical = 3
-color = Color(1, 1, 1, 0.192157)
+color = Color(1, 1, 1, 0.156863)
 
 [node name="CardsContainer" type="HBoxContainer" parent="CanvasLayer"]
 anchors_preset = -1

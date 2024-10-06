@@ -16,7 +16,7 @@ offset_right = 100.0
 offset_bottom = 150.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.398403, 0.667315, 0.635914, 1)
+color = Color(0.418794, 0.654521, 0.367118, 1)
 
 [node name="RuleArea" type="ColorRect" parent="CardBackground"]
 layout_mode = 1
@@ -30,7 +30,7 @@ grow_vertical = 0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 1
-color = Color(0.509804, 0.780392, 0.74902, 1)
+color = Color(1, 1, 1, 0.47451)
 
 [node name="Label" type="Label" parent="CardBackground/RuleArea"]
 custom_minimum_size = Vector2(80, 60)
@@ -56,7 +56,7 @@ anchor_right = 0.98
 anchor_bottom = 0.23
 grow_horizontal = 0
 mouse_filter = 1
-color = Color(0.509804, 0.780392, 0.74902, 1)
+color = Color(1, 1, 1, 0.47451)
 
 [node name="Label" type="Label" parent="CardBackground/ScoreArea"]
 layout_mode = 1
