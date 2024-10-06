@@ -1,8 +1,13 @@
 extends Node2D
 
 @export var colour: Color
-@export var size: Vector2
 
+var size:
+	set(value):
+		size = value
+		if shape != null:
+			shape.scale.x = size.x / shape.texture.get_width()
+			shape.scale.y = size.y / shape.texture.get_height()
 var row
 var column
 

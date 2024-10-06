@@ -1,10 +1,10 @@
 extends Control
 
 @onready var grid = get_node("CanvasLayer/GridContainer")
-@onready var cards_container = get_node("CanvasLayer/BottomContainer/CardsContainer")
-@onready var next_move_placeholder = get_node("CanvasLayer/VBoxContainer/NextMovePlaceholder")
+@onready var cards_container = get_node("CanvasLayer/CardsContainer")
+@onready var next_move_placeholder = get_node("CanvasLayer/NextMoveContainer/NextMovePlaceholder")
 @onready var submit_button = get_node("CanvasLayer/BottomContainer/SubmitButton")
-@onready var score_value_label = get_node("CanvasLayer/VBoxContainer/ScoreValueLabel")
+@onready var score_value_label = get_node("CanvasLayer/VBoxContainer/HBoxContainer/ScoreValueLabel")
 
 @onready var tiny_creature_scene = load("res://scenes/tiny_creature.tscn")
 @onready var card_scene = load("res://scenes/card.tscn")
@@ -14,14 +14,13 @@ extends Control
 @onready var tutorial_scene = load("res://scenes/tutorial.tscn")
 
 var rng = RandomNumberGenerator.new()
-var cell_edge_size = 100
-var cell_edge_center = cell_edge_size / 2
+#var cell_edge_size = 100
 var next_move
 var selected_card
 var selected_creatures = []
 var cells = []
 var score
-var hand_limit = 5
+var hand_limit = 4
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -32,11 +31,16 @@ func _ready() -> void:
 		var new_sb = StyleBoxFlat.new()
 		new_sb.bg_color = Color("a58dff")
 		cell.add_theme_stylebox_override("normal", new_sb)
-		cell.custom_minimum_size = Vector2(cell_edge_size, cell_edge_size)	
+		#cell.custom_minimum_size = Vector2(cell_edge_size, cell_edge_size)	
+		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cell.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		cell.connect("button_up", _on_cell_button_up.bind(cell))
 		grid.add_child(cell)
-		cells.push_back(cell)		
+		cells.push_back(cell)
 	init()	
+	
+	cards_container.connect("item_rect_changed", _on_cards_container_item_rect_changed)
+	next_move_placeholder.connect("item_rect_changed", _on_next_move_placeholder_item_rect_changed)
 
 func init():
 	submit_button.disabled = true
@@ -57,8 +61,8 @@ func init():
 		var creature = _get_random_creature_maybe()
 		
 		if creature != null:
-			creature.size = cell.custom_minimum_size * 0.8
-			creature.position = Vector2(cell_edge_center, cell_edge_center)
+			creature.size = cell.size * 0.8
+			creature.position = cell.size / 2
 			creature.row = cell.row
 			creature.column = cell.column
 			cell.add_child(creature)
@@ -152,7 +156,8 @@ func _display_next_move():
 	
 	var placeholder_center = Vector2(next_move_placeholder.size.x / 2, next_move_placeholder.size.y / 2)
 	if next_move.move_type == Enums.MOVE_TYPE.CREATURE:
-		next_move.creature.size = next_move_placeholder.size * 0.8
+		var side = next_move_placeholder.size.x if next_move_placeholder.size.y > next_move_placeholder.size.x else next_move_placeholder.size.y 
+		next_move.creature.size = Vector2(side * 0.8, side * 0.8)
 		next_move.creature.position = placeholder_center
 		next_move_placeholder.add_child(next_move.creature)
 	elif next_move.move_type == Enums.MOVE_TYPE.CARD:
@@ -199,8 +204,8 @@ func _on_cell_button_up(cell: Button):
 	tiny_creature.row = cell.row
 	tiny_creature.column = cell.column
 	tiny_creature.colour = next_move.creature.colour	
-	tiny_creature.size = cell.custom_minimum_size * 0.8
-	tiny_creature.position = Vector2(cell_edge_center, cell_edge_center)
+	tiny_creature.size = cell.size * 0.8
+	tiny_creature.position = cell.size / 2
 	cell.add_child(tiny_creature)
 	
 	if _is_board_full():
@@ -217,7 +222,7 @@ func _on_card_take_button_up(card):
 	var card_in_hand = card_scene.instantiate()
 	card_in_hand.init(card.score, card.rule)
 	card_in_hand.size.y = cards_container.size.y * 0.9
-	card_in_hand.size.x = cards_container.size.y * 0.75
+	card_in_hand.size.x = cards_container.size.y * 0.65
 	card_in_hand.position.y = cards_container.size.y * 0.05
 	
 	var control = Control.new()
@@ -375,4 +380,23 @@ func _get_current_hand_size():
 
 func _on_tutorial_button_button_up() -> void:
 	var tutorial = tutorial_scene.instantiate()
-	self.add_child(tutorial)
+	self.add_child(tutorial)	
+
+func _on_cards_container_item_rect_changed():
+	for n in cards_container.get_children():
+		var card_in_hand = n.get_children()[0]
+		# todo add proper setter
+		card_in_hand.card_bgr.size.y = cards_container.size.y * 0.9
+		card_in_hand.card_bgr.size.x = cards_container.size.y * 0.65
+		card_in_hand.position.y = cards_container.size.y * 0.05
+		
+func _on_next_move_placeholder_item_rect_changed():
+	if next_move.move_type == Enums.MOVE_TYPE.CREATURE:
+		var side = next_move_placeholder.size.x if next_move_placeholder.size.y > next_move_placeholder.size.x else next_move_placeholder.size.y 
+		next_move.creature.size = Vector2(side * 0.8, side * 0.8)
+		next_move.creature.position = next_move_placeholder.size / 2
+	elif next_move.move_type == Enums.MOVE_TYPE.CARD:
+		var current_hand_size = cards_container.get_child_count()
+		# todo add proper setter
+		next_move.card.card_bgr.size = next_move_placeholder.size * 0.8
+		next_move.card.position = next_move_placeholder.size * 0.1

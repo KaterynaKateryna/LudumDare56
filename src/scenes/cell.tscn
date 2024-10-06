@@ -4,3 +4,5 @@
 
 [node name="Cell" type="Button"]
 script = ExtResource("1_l7hr8")
+
+[connection signal="item_rect_changed" from="." to="." method="_on_cell_rect_changed"]

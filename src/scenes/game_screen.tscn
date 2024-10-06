@@ -21,24 +21,21 @@ layout_mode = 1
 
 [node name="GridContainer" type="GridContainer" parent="CanvasLayer"]
 anchors_preset = -1
-anchor_left = 0.2
-anchor_top = 0.1
-anchor_right = 0.5
-anchor_bottom = 0.6
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.45
+anchor_bottom = 0.8
 grow_horizontal = 2
 grow_vertical = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_horizontal = 3
+size_flags_vertical = 3
 columns = 7
 
 [node name="BottomContainer" type="VBoxContainer" parent="CanvasLayer"]
 anchors_preset = -1
-anchor_left = 0.1
-anchor_top = 0.7
-anchor_right = 0.7
+anchor_top = 0.85
+anchor_right = 0.5
 anchor_bottom = 0.95
-offset_right = 40.0
-offset_bottom = 40.0
 
 [node name="SubmitButton" type="Button" parent="CanvasLayer/BottomContainer"]
 layout_mode = 2
@@ -46,47 +43,70 @@ size_flags_horizontal = 4
 disabled = true
 text = "Submit"
 
-[node name="CardsContainer" type="HBoxContainer" parent="CanvasLayer/BottomContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer"]
 anchors_preset = -1
-anchor_left = 0.7
-anchor_top = 0.2
-anchor_right = 0.95
-anchor_bottom = 0.8
+anchor_left = 0.5
+anchor_top = 0.05
+anchor_right = 1.0
+anchor_bottom = 0.2
 grow_horizontal = 0
 grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
 
 [node name="TutorialButton" type="Button" parent="CanvasLayer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Tutorial"
 
-[node name="NextMoveLabel" type="Label" parent="CanvasLayer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="ScoreLabel" type="Label" parent="CanvasLayer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Score: "
+horizontal_alignment = 1
+
+[node name="ScoreValueLabel" type="Label" parent="CanvasLayer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 0.139449, 0.754646, 1)
+text = "0"
+horizontal_alignment = 1
+
+[node name="NextMoveContainer" type="VBoxContainer" parent="CanvasLayer"]
+anchors_preset = -1
+anchor_left = 0.6
+anchor_top = 0.2
+anchor_right = 0.9
+anchor_bottom = 0.65
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="NextMoveLabel" type="Label" parent="CanvasLayer/NextMoveContainer"]
 layout_mode = 2
 theme = ExtResource("3_bjgpt")
 text = "Next move:"
 horizontal_alignment = 1
 
-[node name="NextMovePlaceholder" type="ColorRect" parent="CanvasLayer/VBoxContainer"]
+[node name="NextMovePlaceholder" type="ColorRect" parent="CanvasLayer/NextMoveContainer"]
 custom_minimum_size = Vector2(400, 400)
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
+size_flags_vertical = 3
 color = Color(1, 1, 1, 0.192157)
 
-[node name="ScoreLabel" type="Label" parent="CanvasLayer/VBoxContainer"]
-layout_mode = 2
-text = "Score:"
-horizontal_alignment = 1
-
-[node name="ScoreValueLabel" type="Label" parent="CanvasLayer/VBoxContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0.139449, 0.754646, 1)
-text = "0"
-horizontal_alignment = 1
+[node name="CardsContainer" type="HBoxContainer" parent="CanvasLayer"]
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.65
+anchor_right = 0.95
+anchor_bottom = 0.95
+size_flags_horizontal = 4
+size_flags_vertical = 3
 
 [connection signal="button_up" from="CanvasLayer/BottomContainer/SubmitButton" to="." method="_on_submit_button_button_up"]
 [connection signal="button_up" from="CanvasLayer/VBoxContainer/TutorialButton" to="." method="_on_tutorial_button_button_up"]
+
+[editable path="Tutorial"]

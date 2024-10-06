@@ -32,6 +32,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="HowToPlayLabel" type="RichTextLabel" parent="CanvasLayer/Panel"]
+process_mode = 2
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.02
@@ -49,7 +50,7 @@ Clear up the field by matching patterns from the cards in your hand. Prevent tin
 [center][b]Next turn[/b][/center]
 Each turn is either a tiny creature or a card.
 To place a creature, click an empty spot on the field.
-You can either take or discard incoming cards. Your hand limit is 5.
+You can either take or discard incoming cards. Your hand limit is 4.
 
 [center][b]Playing cards[/b][/center]
 You can play cards from your hand at any time. Select a card first, then select the creatures that match the pattern of the card. Finally, click Submit to clear up the selected area.
