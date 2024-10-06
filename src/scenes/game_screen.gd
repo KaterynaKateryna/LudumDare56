@@ -118,19 +118,21 @@ func _get_random_card():
 	return card
 
 func _get_random_next_move():
-	var rand = rng.randi_range(0, 4)
+	var rand = rng.randf_range(0, 1)
 	
 	var creature_count = _get_count_of_creatures_on_board()
 	var hand_size = _get_current_hand_size()
 	
 	# give more cards when board fills up and there are no cards in hand
-	var magic_number = 4
-	if creature_count > 30 && hand_size == 0:
-		magic_number = 3
-	if creature_count > 40 && hand_size == 0:
-		magic_number = 2
+	var creature_likelihood = 0.75
+	if hand_size == 0:
+		creature_likelihood = 0.5
+		if creature_count > 30:
+			creature_likelihood = 0.4
+		elif creature_count > 40:
+			creature_likelihood = 0.2
 	
-	if rand < magic_number:
+	if rand < creature_likelihood:
 		print("creature")
 		var result = move.new(Enums.MOVE_TYPE.CREATURE)
 		result.creature = _get_random_creature()
@@ -264,10 +266,10 @@ func _is_rule_satisfied():
 		return _is_size_satisfied(5) && _is_colour_satisfied() && _is_line()
 		
 	if selected_card.rule == Enums.CARD_RULE_TYPE.SQUARE:
-		return _is_size_satisfied(4) && _is_colour_satisfied()
+		return _is_size_satisfied(4) && _is_colour_satisfied() && _is_rectangle(2, 2)
 		
 	if selected_card.rule == Enums.CARD_RULE_TYPE.TWO_BY_THREE:
-		return _is_size_satisfied(6) && _is_colour_satisfied()
+		return _is_size_satisfied(6) && _is_colour_satisfied() && _is_rectangle(2, 3)
 		
 func _is_size_satisfied(size: int):
 	return selected_creatures.size() == size
@@ -318,6 +320,23 @@ func _is_ascending_diagonal():
 		if diff_column != 1:
 			return false
 	return true
+	
+func _is_rectangle(dim1: int, dim2: int):
+	selected_creatures.sort_custom(func(a, b): return a.row < b.row)
+	var min_row = selected_creatures[0].row
+	var max_row = selected_creatures[selected_creatures.size()-1].row
+	
+	selected_creatures.sort_custom(func(a, b): return a.column < b.column)
+	var min_column = selected_creatures[0].column
+	var max_column = selected_creatures[selected_creatures.size()-1].column
+
+	#print("%s %s" % [first.row, first.column])
+	#print("%s %s" % [last.row, last.column])
+	
+	var actual_height = max_row - min_row + 1
+	var actual_width = max_column - min_column + 1
+	
+	return (actual_height == dim1 && actual_width == dim2) || (actual_height == dim2 && actual_width == dim1)
 
 func _on_submit_button_button_up() -> void:
 	submit_button.disabled = true
