@@ -272,6 +272,29 @@ func _is_line():
 				return false
 		return true
 	# diagonal
+	return _is_descending_diagonal() || _is_ascending_diagonal()
+	
+func _is_descending_diagonal():
+	selected_creatures.sort_custom(func(a, b): return a.row < b.row if a.column == b.column else a.column < b.column)
+	for i in range(1, selected_creatures.size()):
+		var diff_row = selected_creatures[i].row - selected_creatures[i-1].row
+		if diff_row != 1:
+			return false
+		var diff_column = selected_creatures[i].column - selected_creatures[i-1].column
+		if diff_column != 1:
+			return false
+	return true
+	
+func _is_ascending_diagonal():
+	selected_creatures.sort_custom(func(a, b): return a.row < b.row if a.column == b.column else a.column < b.column)
+	for i in range(1, selected_creatures.size()):
+		var diff_row = selected_creatures[i].row - selected_creatures[i-1].row
+		if diff_row != -1:
+			return false
+		var diff_column = selected_creatures[i].column - selected_creatures[i-1].column
+		if diff_column != 1:
+			return false
+	return true
 
 func _on_submit_button_button_up() -> void:
 	submit_button.disabled = true
