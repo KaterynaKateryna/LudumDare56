@@ -11,6 +11,7 @@ extends Control
 @onready var cell_scene = load("res://scenes/cell.tscn")
 @onready var move = load("res://scripts/move.gd")
 @onready var game_end_scene = load("res://scenes/game_end.tscn")
+@onready var tutorial_scene = load("res://scenes/tutorial.tscn")
 
 var rng = RandomNumberGenerator.new()
 var cell_edge_size = 100
@@ -370,3 +371,8 @@ func _get_count_of_creatures_on_board():
 	
 func _get_current_hand_size():
 	return cards_container.get_child_count()
+
+
+func _on_tutorial_button_button_up() -> void:
+	var tutorial = tutorial_scene.instantiate()
+	self.add_child(tutorial)

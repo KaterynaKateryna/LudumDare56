@@ -1,0 +1,73 @@
+[gd_scene load_steps=2 format=3 uid="uid://kbvnbiqtojga"]
+
+[ext_resource type="Script" path="res://scenes/tutorial.gd" id="1_33e42"]
+
+[node name="Tutorial" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_33e42")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 80
+
+[node name="Layover" type="ColorRect" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.972549, 0.431373, 1, 0.909804)
+
+[node name="Panel" type="Panel" parent="CanvasLayer"]
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HowToPlayLabel" type="RichTextLabel" parent="CanvasLayer/Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.02
+anchor_top = 0.05
+anchor_right = 0.98
+anchor_bottom = 0.85
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/normal_font_size = 36
+theme_override_font_sizes/bold_font_size = 36
+bbcode_enabled = true
+text = "[center][b]Goal[/b][/center]
+Clear up the field by matching patterns from the cards in your hand. Prevent tiny creatures from overcrowding the area for as long as you can.
+
+[center][b]Next turn[/b][/center]
+Each turn is either a tiny creature or a card.
+To place a creature, click an empty spot on the field.
+You can either take or discard incoming cards. Your hand limit is 5.
+
+[center][b]Playing cards[/b][/center]
+You can play cards from your hand at any time. Select a card first, then select the creatures that match the pattern of the card. Finally, click Submit to clear up the selected area.
+
+[center][b]Final note[/b][/center]
+Enjoy!"
+
+[node name="OkButton" type="Button" parent="CanvasLayer/Panel"]
+process_mode = 2
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.4
+anchor_top = 0.9
+anchor_right = 0.6
+anchor_bottom = 0.98
+offset_top = -8.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Got it!"
+
+[connection signal="button_up" from="CanvasLayer/Panel/OkButton" to="." method="_on_ok_button_button_up"]

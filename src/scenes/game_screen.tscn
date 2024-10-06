@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://cd41gkvk50yg4"]
+[gd_scene load_steps=5 format=3 uid="uid://cd41gkvk50yg4"]
 
 [ext_resource type="PackedScene" uid="uid://cwnehyrj7fgf7" path="res://scenes/background.tscn" id="1_2d4v5"]
 [ext_resource type="Script" path="res://scenes/game_screen.gd" id="1_yoqs2"]
+[ext_resource type="PackedScene" uid="uid://kbvnbiqtojga" path="res://scenes/tutorial.tscn" id="2_4jrdu"]
 [ext_resource type="Theme" uid="uid://dglghe3y18b7k" path="res://themes/main_theme.tres" id="3_bjgpt"]
 
 [node name="GameScreen" type="Control"]
@@ -10,6 +11,9 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("1_yoqs2")
+
+[node name="Tutorial" parent="." instance=ExtResource("2_4jrdu")]
+layout_mode = 1
 
 [node name="Background" parent="." instance=ExtResource("1_2d4v5")]
 
@@ -55,6 +59,11 @@ anchor_bottom = 0.8
 grow_horizontal = 0
 grow_vertical = 2
 
+[node name="TutorialButton" type="Button" parent="CanvasLayer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Tutorial"
+
 [node name="NextMoveLabel" type="Label" parent="CanvasLayer/VBoxContainer"]
 layout_mode = 2
 theme = ExtResource("3_bjgpt")
@@ -80,3 +89,4 @@ text = "0"
 horizontal_alignment = 1
 
 [connection signal="button_up" from="CanvasLayer/BottomContainer/SubmitButton" to="." method="_on_submit_button_button_up"]
+[connection signal="button_up" from="CanvasLayer/VBoxContainer/TutorialButton" to="." method="_on_tutorial_button_button_up"]
