@@ -20,6 +20,7 @@ var selected_card
 var selected_creatures = []
 var cells = []
 var score
+var hand_limit = 5
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -119,7 +120,17 @@ func _get_random_card():
 func _get_random_next_move():
 	var rand = rng.randi_range(0, 4)
 	
-	if rand < 4:
+	var creature_count = _get_count_of_creatures_on_board()
+	var hand_size = _get_current_hand_size()
+	
+	# give more cards when board fills up and there are no cards in hand
+	var magic_number = 4
+	if creature_count > 30 && hand_size == 0:
+		magic_number = 3
+	if creature_count > 40 && hand_size == 0:
+		magic_number = 2
+	
+	if rand < magic_number:
 		print("creature")
 		var result = move.new(Enums.MOVE_TYPE.CREATURE)
 		result.creature = _get_random_creature()
@@ -142,10 +153,16 @@ func _display_next_move():
 		next_move.creature.position = placeholder_center
 		next_move_placeholder.add_child(next_move.creature)
 	elif next_move.move_type == Enums.MOVE_TYPE.CARD:
+		var current_hand_size = cards_container.get_child_count()
 		next_move.card.size = next_move_placeholder.size * 0.8
 		next_move.card.position = next_move_placeholder.size * 0.1
 		next_move_placeholder.add_child(next_move.card)
-		next_move.card.card_bgr.connect("gui_input", _on_card_gui_input.bind(next_move.card))
+		if current_hand_size >= hand_limit:
+			next_move.card.take_button.disabled = true
+		else:
+			next_move.card.take_button.connect("button_up", _on_card_take_button_up.bind(next_move.card))
+		next_move.card.discard_button.connect("button_up", _on_card_discard_button_up)
+			
 		
 func _on_cell_button_up(cell: Button):
 	if selected_card != null:
@@ -193,24 +210,30 @@ func _on_cell_button_up(cell: Button):
 	next_move = _get_random_next_move()
 	_display_next_move()
 	
-func _on_card_gui_input(event: InputEvent, card):
-	if event is InputEventMouseButton and !event.pressed: # pressed == false means the mouse button's state is released.
-		var card_in_hand = card_scene.instantiate()
-		card_in_hand.init(card.score, card.rule)
-		card_in_hand.size.y = cards_container.size.y * 0.9
-		card_in_hand.size.x = cards_container.size.y * 0.75
-		card_in_hand.position.y = cards_container.size.y * 0.05
-		
-		var control = Control.new()
-		control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		control.add_child(card_in_hand)
-		
-		cards_container.add_child(control)
-		
-		card_in_hand.card_bgr.connect("gui_input", _on_card_in_hand_gui_input.bind(card_in_hand))
-		
-		next_move = _get_random_next_move()
-		_display_next_move()
+func _on_card_take_button_up(card):
+	var card_in_hand = card_scene.instantiate()
+	card_in_hand.init(card.score, card.rule)
+	card_in_hand.size.y = cards_container.size.y * 0.9
+	card_in_hand.size.x = cards_container.size.y * 0.75
+	card_in_hand.position.y = cards_container.size.y * 0.05
+	
+	var control = Control.new()
+	control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	control.add_child(card_in_hand)
+	
+	cards_container.add_child(control)
+	
+	card_in_hand.take_button.visible = false
+	card_in_hand.discard_button.visible = false
+	
+	card_in_hand.card_bgr.connect("gui_input", _on_card_in_hand_gui_input.bind(card_in_hand))
+	
+	next_move = _get_random_next_move()
+	_display_next_move()
+	
+func _on_card_discard_button_up():
+	next_move = _get_random_next_move()
+	_display_next_move()
 		
 func _on_card_in_hand_gui_input(event: InputEvent, card):
 	if event is InputEventMouseButton and !event.pressed: # pressed == false means the mouse button's state is released.
@@ -316,5 +339,15 @@ func _on_submit_button_button_up() -> void:
 	to_remove.queue_free()
 	selected_card = null
 	
+	if next_move.move_type == Enums.MOVE_TYPE.CARD:
+		next_move.card.take_button.disabled = false
+		next_move.card.take_button.connect("button_up", _on_card_take_button_up.bind(next_move.card))
+
 func _is_board_full():
 	return cells.all(func(x): return x.get_child_count() > 0)
+	
+func _get_count_of_creatures_on_board():
+	return cells.filter(func(x): return x.get_child_count() > 0).size()
+	
+func _get_current_hand_size():
+	return cards_container.get_child_count()

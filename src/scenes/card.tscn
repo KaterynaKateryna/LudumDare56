@@ -21,10 +21,10 @@ color = Color(0.398403, 0.667315, 0.635914, 1)
 [node name="RuleArea" type="ColorRect" parent="CardBackground"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.1
-anchor_top = 0.5
-anchor_right = 0.9
-anchor_bottom = 0.9
+anchor_left = 0.02
+anchor_top = 0.42
+anchor_right = 0.98
+anchor_bottom = 0.98
 grow_horizontal = 2
 grow_vertical = 0
 size_flags_horizontal = 3
@@ -49,23 +49,23 @@ autowrap_mode = 2
 
 [node name="ScoreArea" type="ColorRect" parent="CardBackground"]
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -40.0
-offset_bottom = 40.0
+anchors_preset = -1
+anchor_left = 0.65
+anchor_top = 0.02
+anchor_right = 0.98
+anchor_bottom = 0.23
 grow_horizontal = 0
 mouse_filter = 1
 color = Color(0.509804, 0.780392, 0.74902, 1)
 
 [node name="Label" type="Label" parent="CardBackground/ScoreArea"]
 layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
+anchors_preset = -1
 anchor_right = 1.0
-offset_left = -40.0
-offset_bottom = 40.0
-grow_horizontal = 0
+anchor_bottom = 1.0
+offset_bottom = -0.5
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_font_sizes/font_size = 24
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -74,3 +74,30 @@ vertical_alignment = 1
 visible = false
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_be2xr")
+
+[node name="Buttons" type="HBoxContainer" parent="CardBackground"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.25
+anchor_right = 0.95
+anchor_bottom = 0.4
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TakeButton" type="Button" parent="CardBackground/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 10
+text = "Take"
+
+[node name="DiscardButton" type="Button" parent="CardBackground/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 10
+text = "Discard"
+
+[connection signal="item_rect_changed" from="CardBackground/RuleArea" to="." method="_on_rule_area_item_rect_changed"]
+[connection signal="item_rect_changed" from="CardBackground/ScoreArea" to="." method="_on_score_area_item_rect_changed"]
+[connection signal="item_rect_changed" from="CardBackground/Buttons/TakeButton" to="." method="_on_take_button_item_rect_changed"]
+[connection signal="item_rect_changed" from="CardBackground/Buttons/DiscardButton" to="." method="_on_discard_button_item_rect_changed"]

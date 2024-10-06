@@ -1,9 +1,13 @@
 extends Node2D
 
 @onready var card_bgr = get_node("CardBackground")
+@onready var rule_area = get_node("CardBackground/RuleArea")
 @onready var rule_label = get_node("CardBackground/RuleArea/Label")
+@onready var score_area = get_node("CardBackground/ScoreArea")
 @onready var score_label = get_node("CardBackground/ScoreArea/Label")
 @onready var check = get_node("CardBackground/Check")
+@onready var take_button = get_node("CardBackground/Buttons/TakeButton")
+@onready var discard_button = get_node("CardBackground/Buttons/DiscardButton")
 
 @export var score: int
 @export var rule: Enums.CARD_RULE_TYPE
@@ -30,3 +34,19 @@ func _ready() -> void:
 func init(score: int, rule: Enums.CARD_RULE_TYPE):
 	self.score = score
 	self.rule = rule
+
+func _on_take_button_item_rect_changed() -> void:
+	if take_button != null:
+		FontHelper.adjustButtonFont(take_button, take_button.size)
+
+func _on_discard_button_item_rect_changed() -> void:
+	if discard_button != null:
+		FontHelper.adjustButtonFont(discard_button, discard_button.size)
+
+func _on_score_area_item_rect_changed() -> void:
+	if score_area != null && score_label != null:
+		FontHelper.adjustLabelFont(score_label, score_area.size)
+
+func _on_rule_area_item_rect_changed() -> void:
+	if rule_area != null && rule_label != null:
+		FontHelper.adjustLabelFont(rule_label, rule_area.size)
