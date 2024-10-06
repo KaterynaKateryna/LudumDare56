@@ -143,7 +143,7 @@ func _display_next_move():
 		next_move_placeholder.add_child(next_move.creature)
 	elif next_move.move_type == Enums.MOVE_TYPE.CARD:
 		next_move.card.size = next_move_placeholder.size * 0.8
-		next_move.card.position = placeholder_center
+		next_move.card.position = next_move_placeholder.size * 0.1
 		next_move_placeholder.add_child(next_move.card)
 		next_move.card.card_bgr.connect("gui_input", _on_card_gui_input.bind(next_move.card))
 		
@@ -197,9 +197,9 @@ func _on_card_gui_input(event: InputEvent, card):
 	if event is InputEventMouseButton and !event.pressed: # pressed == false means the mouse button's state is released.
 		var card_in_hand = card_scene.instantiate()
 		card_in_hand.init(card.score, card.rule)
-		card_in_hand.size.y = cards_container.size.y
+		card_in_hand.size.y = cards_container.size.y * 0.9
 		card_in_hand.size.x = cards_container.size.y * 0.75
-		card_in_hand.position.y = cards_container.size.y / 2
+		card_in_hand.position.y = cards_container.size.y * 0.05
 		
 		var control = Control.new()
 		control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
